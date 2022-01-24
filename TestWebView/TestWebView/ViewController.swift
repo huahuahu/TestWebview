@@ -28,14 +28,27 @@ class ViewController: UIViewController {
             webView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         webView.navigationDelegate = self
-        
+        configBridge()
         webView.loadHTMLString(getHtml(), baseURL: nil)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(triggerJSFunction))
     }
 
     private func getHtml() -> String {
         let url = Bundle.main.url(forResource: "index", withExtension: "html")!
         let string = try! String(contentsOf: url)
         return string
+    }
+
+    private func configBridge() {
+        webView.configuration.userContentController.add(ScriptHandler(), name: "test")
+    }
+
+    @objc private func triggerJSFunction() {
+        print("\(#function)")
+        let js = "window.testSendToNative()"
+        webView.evaluateJavaScript(js) { result, err in
+            print("eval \(result), \(err)")
+        }
     }
 
 }
