@@ -31,6 +31,7 @@ class ViewController: UIViewController {
         configBridge()
         webView.loadHTMLString(getHtml(), baseURL: nil)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(triggerJSFunction))
+        handleMenu()
     }
 
     private func getHtml() -> String {
@@ -39,16 +40,21 @@ class ViewController: UIViewController {
         return string
     }
 
+
     private func configBridge() {
         webView.configuration.userContentController.add(ScriptHandler(), name: "test")
     }
 
     @objc private func triggerJSFunction() {
         print("\(#function)")
-        let js = "window.testSendToNative()"
-        webView.evaluateJavaScript(js) { result, err in
-            print("eval \(result), \(err)")
+        webView.becomeFirstResponder()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            let js = "window.testFunction()"
+            self.webView.evaluateJavaScript(js) { result, err in
+                print("eval \(result), \(err)")
+            }
         }
+
     }
 
 }
@@ -65,4 +71,37 @@ extension ViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
         print("\(#function)")
     }
+}
+
+extension ViewController {
+
+  func handleMenu() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleMenuControllerWillShow), name: UIMenuController.willShowMenuNotification, object: nil)
+    }
+
+    @objc private func handleMenuControllerWillShow() {
+        print("will show")
+        let menuItem = UIMenuItem(title: "Add Sharing Link", action: #selector(ViewController.handleAddSharingLink))
+        UIMenuController.shared.menuItems = [menuItem]
+
+        
+    }
+
+    @objc func handleAddSharingLink() {
+        print("called")
+
+        let js = "window.testFunction()"
+        self.webView.evaluateJavaScript(js) { result, err in
+            print("eval \(result), \(err)")
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                self.webView.evaluateJavaScript(js) { result, err in
+                }
+            }
+        }
+    }
+
+
+
+
 }

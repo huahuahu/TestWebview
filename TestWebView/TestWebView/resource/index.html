@@ -7,36 +7,47 @@
   <title>Document</title>
 </head>
 <body>
-  test
-  <!-- <img src=""> -->
-  <img src="https://www.google.com.hk/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" style="width: 100%;"/>
+  <h1>test</h1>
+  <div id = "canEdit" contenteditable="true">edit me
+    <div id = "container"></div>
+  </div>
+
+
+  <button id ="testButton" > change </button>
 </body>
 <script>
-  window.testSendToNative = () => {
-    // let arrayBuffer = new ArrayBuffer(4)
-    // var view   = new Int32Array(arrayBuffer);
-    // view.fill(2)
-    const arrayBuffer = (new Uint16Array([1,2,3])).buffer
-    // let image = document.querySelector('img')
-    // fetch(image.src).then(r => {
-    //   return r.arrayBuffer()
-    // }).then(arrayBuffer => {
-      let payload = {
-      test: 33445,
-      result: arrayBuffer
+
+  const container = document.getElementById('container');
+  let inserted = false;
+
+  // let button = document.querySelector('#testButton')
+  // button.addEventListener('click',
+   window.testFunction = () => {
+    let edit = document.getElementById('canEdit');
+    // edit.contentEditable = false
+    console.log('clicked')
+    if (inserted === false) {
+      inserted = true
+
+      let anchor = document.createElement('a')
+      container.appendChild(anchor)
+        anchor.outerHTML = '<a href="https://microsoft-my.sharepoint-df.com/:w:/g/personal/pshao_microsoft_com1/EXXTCJOBTrxBmWHan7pOJPYBBoV-KxVntR9A-FxuZkgYxg?e=TOmaKW" id="ms-outlook-mobile-sharing-link-anchor-10f232a5-52c1-43d8-bf21-8e09804ed9e4" style="background-color: #F1F1F1; pointer-events: auto; padding: 0px 1px; border-radius: 4px; user-select: all; text-decoration: none;"><img alt="" src="https://spoprod-a.akamaihd.net/files/fabric-cdn-prod_20210511.003/assets/item-types/16/docx.svg" style="width: 16px; height: 16px; vertical-align: middle; padding: 1px 2px 2px 0px;">ODB-test.docx</a>'
+        // anchor.setAttribute('aria-live', 'assertive')
+    } else {
+      let anchor = document.getElementById('ms-outlook-mobile-sharing-link-anchor-10f232a5-52c1-43d8-bf21-8e09804ed9e4')
+      for (const node of Array.from(anchor.childNodes)) {
+        if (node.nodeType == Node.TEXT_NODE) {
+          anchor.setAttribute('aria-live', 'assertive')
+
+          node.nodeValue = "New value";
+          break;
+        }
+      }
+
+      anchor.removeAttribute('aria-live')
     }
-    console.log(arrayBuffer, arrayBuffer[0], arrayBuffer[1], arrayBuffer[2])
-    // console.log(view, arrayBuffer, arrayBuffer[0], arrayBuffer[1], arrayBuffer[2], arrayBuffer[3])
-    window.webkit.messageHandlers.test.postMessage(JSON.stringify(payload))
-
-    // }).catch(err => {
-    //   window.webkit.messageHandlers.test.postMessage(`err ${err}`)
-    // })
-    // .finally(() => {
-    //   window.webkit.messageHandlers.test.postMessage("finish")
-
-    // })
-    return true
   }
+  // )
+
 </script>
 </html>
